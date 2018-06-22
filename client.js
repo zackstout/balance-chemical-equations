@@ -19,40 +19,129 @@ function balanceEq(reagents, products) {
 
 // CH4 + Cl2 -> CCl4 + HCl
 // Translates to:
-// [4 0 0 -1 | 0]
-// [1 0 -1 0 | 0]
-// [0 2 -4 0 | 0]
+// [4 0 0 -1 | 0] // H
+// [1 0 -1 0 | 0] // C
+// [0 2 -4 -1 | 0] // Cl
 // [0 0 0 0 | 0] // We autofill with zeros to get a square matrix (will only work if number of distinct elements is <= number of distinct molecules)
 
 // the algorithm for finding a determinant should be recursive.
 
 
+
+function generateMatrix(ins, outs) {
+  let parsed_in = parseArray(ins);
+  let our_ins = ins.map(mol => parseMolecule(mol));
+  let our_outs = outs.map(mol => parseMolecule(mol));
+  let equation = our_ins.concat(our_outs);
+  let res = [];
+  console.log(equation);
+  // loop through number of distinct elements in the inputs:
+  for (let i=0; i < Object.keys(parsed_in).length; i++) {
+    let row = [];
+    let elem = Object.keys(parsed_in)[i];
+    // console.log(elem);
+
+
+
+    // loop through each molecule in the equation:
+    for (let j=0; j < equation.length; j++) {
+      let sign = j >= our_ins.length ? -1 : 1;
+      if (equation[j].hasOwnProperty(elem)) {
+        row.push(sign * equation[j][elem]);
+        console.log(equation[j], elem);
+      } else {
+        row.push(0);
+      }
+    }
+    res.push(row);
+
+  }
+  return res;
+}
+
+console.log(generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']));
+
+// Reagents: {"C": 1, "H": 4, "Cl": 2}
+// Products: {"C":, 1, "H": 1, "Cl": 5} // This shouldn't be relevant.
+
+function parseMolecule(str) {
+  var res = {};
+
+  for (let i=0; i < str.length; i++) {
+    let elem, num;
+    if ((/[A-Z]/).test(str[i])) {
+      if ((i != str.length - 1) && (/[a-z]/).test(str[i+1])) {
+        elem = str[i] + str[i+1];
+        // this is wrong, because will miss multiple digits:
+        if ((/\d/).test(str[i+2])) {
+          num = str[i+2];
+          // skip ahead:
+          i += 2;
+        } else {
+          num = 1;
+          i += 1;
+        }
+        res[elem] = parseInt(num);
+      } else {
+        elem = str[i];
+
+        if ((/\d/).test(str[i+1])) {
+          num = str[i+1];
+          // skip ahead:
+          i++;
+        } else {
+          num = 1;
+        }
+        res[elem] = parseInt(num);
+      }
+    }
+  }
+
+  return res;
+}
+
+console.log(parseMolecule('Ca2Cl4OSZ'));
+
+// Oh this isn't quite what we want, is it? We also need to keep track of position of molecule in our system.
+function parseArray(arr) {
+  let res = {};
+  // would prob be cleaner to initliaze empty object with 0s....eh maybe only in Python
+  arr.forEach(mol => {
+    let parsed_mol = parseMolecule(mol);
+    Object.keys(parsed_mol).forEach(elem => {
+      if (!res.hasOwnProperty(elem)) {
+        res[elem] = parsed_mol[elem];
+      } else {
+        res[elem] += parsed_mol[elem];
+      }
+    });
+  });
+  return res;
+}
+
+console.log(parseArray(['MgSO4', 'CaCl2', 'CO3']));
+
+
+
+
+
+
+
+
+
+
+
 let matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-// Ok it's not paying attention to the second row.......why?? Or rather, it's treating it always as 2.
 let matrix2 = [[1, 0, 0, 0], [0, 12, 0, 0], [0, 0, 3, 0], [0, 0, 0, 23]];
-
-// let result = 0;
-
-// let bool = true;
-
 
 
 // Ooooh this whole time we were forgetting a key piece, it's that coefficient multiplied by the determinant of the sub-matrix...
 // Oooh i think i see the problem, we're mutating the array that we're walking through (smallerMatrices)....because the recursive call reassigns it. Whoops.
 function calculateDeterminant(matrix, result) {
-
-  // if (matrix.length === 1 ) return matrix[0][0];
   // base case:
   if (matrix.length === 2) {
-    console.log(matrix);
+    // console.log(matrix);
     let res = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-    console.log(res);
-    // result = bool ? result + res : result - res;
-    //
-    // bool = !bool;
-
-    // result += res;
-
     return res;
   }
 
@@ -73,56 +162,25 @@ function calculateDeterminant(matrix, result) {
       }
       newMatrix.push(newRow);
     }
-    // console.log(newMatrix);
+
     smallerMatrices.push({
       coeff: matrix[0][i],
       matrix: newMatrix
     });
-    // calculateDeterminant(newMatrix);
-
-    // if (newMatrix[0].length == 2) {
-    //   // var sign = k % 2 === 0 ? 1 : -1;
-    //   result += sign * calculateDeterminant(newMatrix);
-    //
-    // } else {
-    //   calculateDeterminant(newMatrix);
-    // }
-
-
-
-    // calculateDeterminant(newMatrix);
-
-
   }
 
   console.log(smallerMatrices);
 
-  // let result;
-
-
-  // let res = smallerMatrices.reduce((t, n) => t + calculateDeterminant(n), 0);
-
-  // console.log(res);
-  //
-  // // let res = 0;
-  //
   // // Get the sum:
   for (let i=0; i < smallerMatrices.length; i++) {
-    // if (smallerMatrices[i].matrix[0].length == 2) {
       let sign = i % 2 === 0 ? 1 : -1;
       result += smallerMatrices[i].coeff * sign * calculateDeterminant(smallerMatrices[i].matrix, result);
-
-    // } else {
-      // calculateDeterminant(smallerMatrices[i]);
-    // }
-
   }
 
-  // console.log(res);
   return result;
 }
 
 
-var x = calculateDeterminant(matrix2, 0);
+var x = calculateDeterminant(matrix, 0);
 console.log(x);
 // console.log(result);
