@@ -26,7 +26,14 @@ function balanceEq(reagents, products) {
 
 // the algorithm for finding a determinant should be recursive.
 
+// x<i> = det(A<i>)/det(A), where A<i> is A with ith column replaced with zeros (in our case):
+// WAAAAAIT a second, Cramers Rule won't work -- our matrices always (or often) have determinant of 0!!!!!
+function applyCramersRule(mat) {
+  let res = [];
+  for (let i=0; i < mat.length; i++) {
 
+  }
+}
 
 function generateMatrix(ins, outs) {
   let parsed_in = parseArray(ins);
@@ -34,21 +41,17 @@ function generateMatrix(ins, outs) {
   let our_outs = outs.map(mol => parseMolecule(mol));
   let equation = our_ins.concat(our_outs);
   let res = [];
-  console.log(equation);
+  // console.log(equation);
   // loop through number of distinct elements in the inputs:
   for (let i=0; i < Object.keys(parsed_in).length; i++) {
     let row = [];
     let elem = Object.keys(parsed_in)[i];
-    // console.log(elem);
-
-
 
     // loop through each molecule in the equation:
     for (let j=0; j < equation.length; j++) {
       let sign = j >= our_ins.length ? -1 : 1;
       if (equation[j].hasOwnProperty(elem)) {
-        row.push(sign * equation[j][elem]);
-        console.log(equation[j], elem);
+        row.push(sign * equation[j][elem]); // aha, had i instead of j
       } else {
         row.push(0);
       }
@@ -56,10 +59,18 @@ function generateMatrix(ins, outs) {
     res.push(row);
 
   }
+  // populate rest of matrix if necessary: (not worrying about other possibility for now)
+  while (res.length < res[0].length) {
+    let row = new Array(res[0].length).fill(0);
+    res.push(row);
+  }
+
   return res;
 }
 
-console.log(generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']));
+let matrix3 = generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']);
+console.log(matrix3);
+console.log(calculateDeterminant(matrix3, 0));
 
 // Reagents: {"C": 1, "H": 4, "Cl": 2}
 // Products: {"C":, 1, "H": 1, "Cl": 5} // This shouldn't be relevant.
@@ -102,7 +113,7 @@ function parseMolecule(str) {
 
 console.log(parseMolecule('Ca2Cl4OSZ'));
 
-// Oh this isn't quite what we want, is it? We also need to keep track of position of molecule in our system.
+// Oh this isn't quite what we want, is it? We also need to keep track of position of molecule in our system. Still useful though, just could have been simpler (array of unique elements) for the purposes we end up using it for.
 function parseArray(arr) {
   let res = {};
   // would prob be cleaner to initliaze empty object with 0s....eh maybe only in Python
