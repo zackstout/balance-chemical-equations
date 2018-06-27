@@ -5,6 +5,111 @@ function balanceEq(reagents, products) {
 
 }
 
+// Great, this works!:
+console.log(math);
+
+
+const mat = [[1, 0, 0], [0, 2, 3], [0, 0, 4]];
+const vec = [1, 2, 3];
+
+// very useful to know this exists, though not going to work here because the zero-vector will always be a solution:
+console.log(math.lusolve(mat, vec));
+
+
+
+
+function multiplyMatrixAndVector(mat, vec) {
+  let res = 0;
+  if (mat.length !== vec.length) {
+    throw new Error('same length fool!');
+  }
+  for (let i=0; i < mat.length; i++) {
+    res += dotProduct(mat[i], vec);
+  }
+  return res;
+}
+
+console.log(dotProduct([1, 2], [2,3]));
+
+function dotProduct(v1, v2) {
+  let res = 0;
+  if (v1.length !== v2.length) {
+    throw new Error('same length fool!');
+  }
+  for (let i=0; i < v1.length; i++) {
+    res += v1[i] * v2[i];
+  }
+  return res;
+}
+
+// Say len is 5, max is 4, we want [1, 0, 0, 0], [2, 0, 0, 0], ....
+// One method, taken from online:
+// function generateTests(chars) {
+//   let res = [];
+//
+//   var f = function(prefix, chars) {
+//     for (var i=0; i < chars.length; i++) {
+//       res.push(prefix + chars[i]);
+//       f(prefix + chars[i], chars.slice(i + 1));
+//     }
+//   };
+//
+//   f('', chars);
+//
+//   return res;
+// }
+//
+// let tests = generateTests([0, 1, 2, 3, 4, 5]);
+// console.log(tests);
+
+
+// I think my approach will be to convert to base-x counting, count up to max number, create corresponding array for each number.
+// So if our max is 5, we're dealing with base-6. Max number (if len is 3) would be 6^3 - 1.
+
+function genTests(max, len) {
+  var base = max + 1;
+  var maxNum = Math.pow(base, len) - 1;
+  console.log(maxNum);
+
+  let res = [];
+  for (let i=0; i < maxNum; i++) {
+    var num = i.toString(base);
+    console.log(num);
+  }
+}
+
+
+
+
+
+
+
+console.log(parseInt('7', 6));
+let num = 7;
+
+console.log(num.toString(6));
+
+genTests(5, 4);
+
+// Takes in e.g. (6, 7), returns 11 (which is 7 in base 6).
+// Woww, this is a good challenge, but I'm glad we don't have to do it:
+function convertToBase(n, x) {
+  let res = '';
+  let counter = 0;
+
+  while (x >= n) {
+    var val = Math.pow(n, counter);
+  }
+}
+
+
+
+
+
+
+
+
+
 
 // Need a function to take a string like 'CO2' and parse into object: {'C': 1, 'O': 2}
 
@@ -70,7 +175,32 @@ function generateMatrix(ins, outs) {
 
 let matrix3 = generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']);
 console.log(matrix3);
+
+console.log(multiplyMatrixAndVector(matrix3, [1, 4, 1, 4]));
+
+let solution = math.lusolve(matrix3, [0, 0, 0, 0]);
+console.log(solution);
+
+console.log(math.lup(matrix3));
+
 console.log(calculateDeterminant(matrix3, 0));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Reagents: {"C": 1, "H": 4, "Cl": 2}
 // Products: {"C":, 1, "H": 1, "Cl": 5} // This shouldn't be relevant.
