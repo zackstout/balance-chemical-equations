@@ -3,3 +3,6 @@ I thought it would be a fun challenge to write an algorithm that takes in a list
 
 ## Bugs:
 - Only works with single digit subscripts right now -- and my whole parseMolecule function is hacky/ugly.
+
+
+Cool, we learned about Math.js
