@@ -1,5 +1,4 @@
 
-
 import { multiplyMatrixAndVector } from './math.js';
 import { dotProduct } from './math.js';
 import { calculateDeterminant } from './math.js';
@@ -8,16 +7,16 @@ import { parseMolecule } from './molecules.js';
 import { parseArray } from './molecules.js';
 
 
-
 // Takes two arrays. E.g. ['CO2', 'H2O'], ['O2', 'C6H12O6']
 function balanceEq(reagents, products) {
-
+  var matrix = generateMatrix(reagents, products);
+  var solution = solveMatrix(matrix);
+  console.log(reagents, products, matrix, solution);
 }
 
 
 // I think my approach will be to convert to base-x counting, count up to max number, create corresponding array for each number.
 // So if our max is 5, we're dealing with base-6. Max number (if len is 3) would be 6^3 - 1.
-
 function genTests(max, len) {
   var base = max + 1;
   var maxNum = Math.pow(base, len) - 1;
@@ -26,7 +25,7 @@ function genTests(max, len) {
   let res = [];
   for (let i=0; i < maxNum; i++) {
     var num = i.toString(base);
-    // console.log(num);
+
     // add leading zeros:
     while (num.length < len) {
       num = '0' + num;
@@ -37,20 +36,20 @@ function genTests(max, len) {
 }
 
 
-
 function generateMatrix(ins, outs) {
   let parsed_in = parseArray(ins);
   let our_ins = ins.map(mol => parseMolecule(mol));
   let our_outs = outs.map(mol => parseMolecule(mol));
   let equation = our_ins.concat(our_outs);
+
   let res = [];
-  // console.log(equation);
-  // loop through number of distinct elements in the inputs:
+
+  // Loop through number of distinct elements in the inputs:
   for (let i=0; i < Object.keys(parsed_in).length; i++) {
     let row = [];
     let elem = Object.keys(parsed_in)[i];
 
-    // loop through each molecule in the equation:
+    // Loop through each molecule in the equation:
     for (let j=0; j < equation.length; j++) {
       let sign = j >= our_ins.length ? -1 : 1;
       if (equation[j].hasOwnProperty(elem)) {
@@ -60,9 +59,9 @@ function generateMatrix(ins, outs) {
       }
     }
     res.push(row);
-
   }
-  // populate rest of matrix if necessary: (not worrying about other possibility for now)
+
+  // Populate rest of matrix if necessary: (not worrying about other possibility for now)
   while (res.length < res[0].length) {
     let row = new Array(res[0].length).fill(0);
     res.push(row);
@@ -70,15 +69,6 @@ function generateMatrix(ins, outs) {
 
   return res;
 }
-
-
-
-let matrix3 = generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']);
-console.log(matrix3);
-
-let sol = solveMatrix(matrix3);
-console.log(sol);
-
 
 
 function solveMatrix(mat) {
@@ -107,21 +97,14 @@ function solveMatrix(mat) {
 }
 
 
+// Tests:
+balanceEq(['CH4', 'Cl2'], ['CCl4', 'HCl']);
+balanceEq(['Fe2O3', 'C'], ['Fe', 'CO2']);
+balanceEq(['N2', 'H2'], ['NH3']);
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-console.log(parseArray(['MgSO4', 'CaCl2', 'CO3']));
+// console.log(parseArray(['MgSO4', 'CaCl2', 'CO3']));

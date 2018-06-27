@@ -42,6 +42,7 @@ export function parseArray(arr) {
   // would prob be cleaner to initliaze empty object with 0s....eh maybe only in Python
   arr.forEach(mol => {
     let parsed_mol = parseMolecule(mol);
+    
     Object.keys(parsed_mol).forEach(elem => {
       if (!res.hasOwnProperty(elem)) {
         res[elem] = parsed_mol[elem];
