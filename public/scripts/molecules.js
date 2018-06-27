@@ -3,15 +3,20 @@ export function parseMolecule(str) {
   var res = {};
 
   for (let i=0; i < str.length; i++) {
-    let elem, num;
+    let elem;
+    let num = '';
     if ((/[A-Z]/).test(str[i])) {
       if ((i != str.length - 1) && (/[a-z]/).test(str[i+1])) {
         elem = str[i] + str[i+1];
-        // this is wrong, because will miss multiple digits:
+
         if ((/\d/).test(str[i+2])) {
-          num = str[i+2];
+          let m = 1;
+          while ((/\d/).test(str[i + 1 + m])) {
+            num += str[i + 1 + m];
+            m++;
+          }
           // skip ahead:
-          i += 2;
+          i += m;
         } else {
           num = 1;
           i += 1;
@@ -21,9 +26,16 @@ export function parseMolecule(str) {
         elem = str[i];
 
         if ((/\d/).test(str[i+1])) {
-          num = str[i+1];
+          let m = 1;
+          while ((/\d/).test(str[i + m])) {
+            num += str[i + m];
+            m++;
+          }
           // skip ahead:
-          i++;
+          i += m - 1;
+          // num = str[i+1];
+          // // skip ahead:
+          // i++;
         } else {
           num = 1;
         }
@@ -42,7 +54,7 @@ export function parseArray(arr) {
   // would prob be cleaner to initliaze empty object with 0s....eh maybe only in Python
   arr.forEach(mol => {
     let parsed_mol = parseMolecule(mol);
-    
+
     Object.keys(parsed_mol).forEach(elem => {
       if (!res.hasOwnProperty(elem)) {
         res[elem] = parsed_mol[elem];
