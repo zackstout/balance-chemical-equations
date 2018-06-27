@@ -6,12 +6,51 @@ import { calculateDeterminant } from './math.js';
 import { parseMolecule } from './molecules.js';
 import { parseArray } from './molecules.js';
 
+const digits = [0, 1, 2, 3, 4, 5,6, 7, 8, 9];
+
+function format(mol) {
+  let res = '';
+  const digitStrings = digits.map(char => char.toString());
+  for (let i=0; i < mol.length; i++) {
+    let char = mol[i];
+    if (!digitStrings.includes(char)) {
+      res += char;
+    } else {
+      res += `<sub>${char}</sub>`;
+    }
+  }
+
+  return res;
+}
+
+$(document).ready(function() {
+  $('.sub').on('click', function() {
+    var reagents = $('.reagents').val().split(',');
+    var products = $('.products').val().split(',');
+    console.log(reagents, products);
+    let solution = balanceEq(reagents, products);
+    console.log(solution);
+    var output = '';
+    reagents.concat(products).forEach((mol, index) => {
+      output += solution[index];
+      output += format(mol);
+      if (index == reagents.length - 1) {
+        output += ' --> ';
+      } else if (index != solution.length - 1) {
+        output += ' + ';
+      }
+    });
+
+    $('.output').html(output);
+  });
+});
 
 // Takes two arrays. E.g. ['CO2', 'H2O'], ['O2', 'C6H12O6']
 function balanceEq(reagents, products) {
   var matrix = generateMatrix(reagents, products);
   var solution = solveMatrix(matrix);
   console.log(reagents, products, matrix, solution);
+  return solution;
 }
 
 
@@ -101,6 +140,7 @@ function solveMatrix(mat) {
 balanceEq(['CH4', 'Cl2'], ['CCl4', 'HCl']);
 balanceEq(['Fe2O3', 'C'], ['Fe', 'CO2']);
 balanceEq(['N2', 'H2'], ['NH3']);
+balanceEq(['C2H4', 'O2'], ['CO2', 'H2O']);
 
 
 

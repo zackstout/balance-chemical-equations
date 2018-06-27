@@ -3,11 +3,27 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <script src="jquery.js" charset="utf-8"></script>
     <script src="https://unpkg.com/mathjs@5.0.0/dist/math.min.js" charset="utf-8"></script>
     <!-- Oooh i was trying to attach the 'module' tag to wrong script before: -->
     <script type="module" src="scripts/client.js" charset="utf-8"></script>
+    <style media="screen">
+      .output {
+        margin: 20px;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
+    <div class="input">
+      <p>List reagents, separated by commas: <input type="text" class="reagents" value="CH4, Cl2"></p>
+      <p>List products, separated by commas: <input type="text" class="products" value="CCl4, HCl"></p>
+      <button type="button" class="sub">Submit</button>
+    </div>
+
+    <div class="output">
+
+    </div>
 
   </body>
 </html>
