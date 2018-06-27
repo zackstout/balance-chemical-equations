@@ -19,17 +19,20 @@ console.log(math.lusolve(mat, vec));
 
 
 function multiplyMatrixAndVector(mat, vec) {
-  let res = 0;
+  let res = [];
+  // console.log(mat, vec, 'HIHIHHIHI');
   if (mat.length !== vec.length) {
     throw new Error('same length fool!');
   }
   for (let i=0; i < mat.length; i++) {
-    res += dotProduct(mat[i], vec);
+    res.push(dotProduct(mat[i], vec));
   }
   return res;
 }
 
 console.log(dotProduct([1, 2], [2,3]));
+
+console.log(dotProduct([1, 1, 1, 1], [4, 0, 0, -1]));
 
 function dotProduct(v1, v2) {
   let res = 0;
@@ -74,8 +77,14 @@ function genTests(max, len) {
   let res = [];
   for (let i=0; i < maxNum; i++) {
     var num = i.toString(base);
-    console.log(num);
+    // console.log(num);
+    // add leading zeros:
+    while (num.length < len) {
+      num = '0' + num;
+    }
+    res.push(num.split(''));
   }
+  return res;
 }
 
 
@@ -89,7 +98,8 @@ let num = 7;
 
 console.log(num.toString(6));
 
-genTests(5, 4);
+let tests = genTests(3, 5);
+console.log(tests);
 
 // Takes in e.g. (6, 7), returns 11 (which is 7 in base 6).
 // Woww, this is a good challenge, but I'm glad we don't have to do it:
@@ -175,6 +185,62 @@ function generateMatrix(ins, outs) {
 
 let matrix3 = generateMatrix(['CH4', 'Cl2'], ['CCl4', 'HCl']);
 console.log(matrix3);
+
+let sol = solveMatrix(matrix3);
+console.log(sol);
+
+console.log(multiplyMatrixAndVector(matrix3, [1, 4, 1, 4]) == [0, 0, 0, 0]);
+
+function solveMatrix(mat) {
+  // first number tells our genTests function how many tests to generate.
+  // In fact, we shouldn't do it this way, we should check them as we're generating them so that we don't needlessly generate ones that won't be checked.
+  let ourTests = genTests(8, mat.length);
+  console.log(ourTests);
+  let res = [];
+
+  console.log(mat);
+
+  console.log(multiplyMatrixAndVector(mat, [1, 4, 1, 4]));
+
+  // let ourTestsInts = ourTests.map(test => {
+  //   // console.log(test);
+  //   return test.map(t => {
+  //     // console.log(t);
+  //     return parseInt(t);
+  //   });
+  // });
+
+  let ourTestsInts = ourTests.map(test => test.map(t => parseInt(t)));
+
+  // Ignore first one, which is [0, 0, 0, ..., 0]:
+  // Oh and we also want to ignore *any* solutions containing a 0....
+  for (let i=1; i < ourTestsInts.length; i++) {
+    let test = ourTestsInts[i];
+    // console.log(test);
+    // if (test == [1, 4, 1, 4]) console.log('what up hhhhh');
+
+    let result = multiplyMatrixAndVector(mat, test);
+    let target = new Array(mat.length).fill(0);
+
+    // Ooooh you can't check for equality of matrices with ==:
+    if (result.join(',') == target.join(',') && !test.includes(0)) {
+      res = test;
+      break;
+    }
+  }
+
+  // console.log(ourTests);
+  // console.log(ourTestsInts);
+  return res;
+}
+
+
+console.log(['1', '2'].map(x => parseInt(x)));
+
+
+
+
+
 
 console.log(multiplyMatrixAndVector(matrix3, [1, 4, 1, 4]));
 
