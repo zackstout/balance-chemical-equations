@@ -70,6 +70,7 @@ export function solveMatrix(mat) {
 
   let res = [];
 
+  // Convert all vector entries to integers:
   let ourTestsInts = ourTests.map(test => test.map(t => parseInt(t)));
 
   // Oh and we also want to ignore *any* solutions containing a 0....

@@ -4,47 +4,41 @@ export function parseMolecule(str) {
 
   for (let i=0; i < str.length; i++) {
     let elem;
-    let num = '';
     if ((/[A-Z]/).test(str[i])) {
+      // Check whether element has one or two characters:
       if ((i != str.length - 1) && (/[a-z]/).test(str[i+1])) {
-        elem = str[i] + str[i+1];
-
-        if ((/\d/).test(str[i+2])) {
-          let m = 1;
-          while ((/\d/).test(str[i + 1 + m])) {
-            num += str[i + 1 + m];
-            m++;
-          }
-          // skip ahead:
-          i += m;
-        } else {
-          num = 1;
-          i += 1;
-        }
-        res[elem] = parseInt(num);
+        i = addProp(res, 1, str, i);
       } else {
-        elem = str[i];
-
-        if ((/\d/).test(str[i+1])) {
-          let m = 1;
-          while ((/\d/).test(str[i + m])) {
-            num += str[i + m];
-            m++;
-          }
-          // skip ahead:
-          i += m - 1;
-          // num = str[i+1];
-          // // skip ahead:
-          // i++;
-        } else {
-          num = 1;
-        }
-        res[elem] = parseInt(num);
+        i = addProp(res, 0, str, i);
       }
     }
   }
 
   return res;
+}
+
+// x will be 0 or 1:
+function addProp(obj, x, str, i) {
+  let elem = x == 1 ? str[i] + str[i+1] : str[i];
+  let num = '';
+
+  if ((/\d/).test(str[i+1+x])) {
+    // To allow for multi-digit subscripts, such as in C6H12O6:
+    let m = 1;
+    while ((/\d/).test(str[i + x + m])) {
+      num += str[i + x + m];
+      m++;
+    }
+    // Skip ahead:
+    i += m + x - 1;
+  } else {
+    num = 1;
+    i += x;
+  }
+  // Store the value in a property in our result object:
+  obj[elem] = parseInt(num);
+  // Return so that the loop remembers where it is:
+  return i;
 }
 
 
