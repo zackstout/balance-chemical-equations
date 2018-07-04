@@ -2,6 +2,8 @@
 import { solveMatrix } from './matrix.js';
 import { genTests } from './matrix.js';
 import { generateMatrix } from './matrix.js';
+import { getMols } from './matrix.js';
+
 
 $(document).ready(function() {
 
@@ -9,6 +11,8 @@ $(document).ready(function() {
   $('.sub').on('click', function() {
     var reagents = $('.reagents').val().split(',');
     var products = $('.products').val().split(',');
+    // console.log(reagents, products);
+    // console.log(getMols(reagents));
 
     let solution = balanceEq(reagents, products);
 
@@ -26,6 +30,18 @@ $(document).ready(function() {
     });
 
     $('.output').html(output);
+
+
+
+    // Graphic representation:
+    let reagent_mols = getMols(reagents); // array of objects
+    let product_mols = getMols(products);
+
+    $.get('/stuff').then(data => {
+      console.log(data);
+    }).catch(err => {
+      console.log(err);
+    });
   });
 
 

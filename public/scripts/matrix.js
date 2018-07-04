@@ -27,6 +27,11 @@ export function genTests(max, len) {
   return res;
 }
 
+export function getMols(arr) {
+  // let parsed = parseArray(arr);
+  return arr.map(mol => parseMolecule(mol));
+}
+
 
 export function generateMatrix(ins, outs) {
   let parsed_in = parseArray(ins);

@@ -29,7 +29,7 @@ export function dotProduct(v1, v2) {
 // Ooooh this whole time we were forgetting a key piece, it's that coefficient multiplied by the determinant of the sub-matrix...
 // Oooh i think i see the problem, we're mutating the array that we're walking through (smallerMatrices)....because the recursive call reassigns it. Whoops.
 export function calculateDeterminant(matrix, result) {
-  // base case:
+  // Base case:
   if (matrix.length === 2) {
     let res = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     return res;

@@ -17,6 +17,7 @@ export function parseMolecule(str) {
   return res;
 }
 
+
 // x will be 0 or 1:
 function addProp(obj, x, str, i) {
   let elem = x == 1 ? str[i] + str[i+1] : str[i];
